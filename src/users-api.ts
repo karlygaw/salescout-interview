@@ -8,14 +8,23 @@ import express, { Request, Response } from 'express';
 const app = express();
 
 app.use(express.json());
-
 const users: { name: string }[] = [];
 
-app.post('/user', (req: Request, res: Response) => {
-    res.status(200).send();
+// POST /user
+app.post('/user', (req: Request, res: Response): void => {
+    const { name } = req.body;
+
+    if (!name) {
+        res.status(400).json({ error: 'Name is required' });
+        return;
+    }
+
+    users.push({ name });
+    res.status(200).json({ message: 'User successfully added' });
 });
 
-app.get('/users', (req: Request, res: Response) => {
+// GET /users
+app.get('/users', (req: Request, res: Response): void => {
     res.status(200).json(users);
 });
 

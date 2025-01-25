@@ -5,8 +5,43 @@
 
 // Use redis library
 
-async function manageRedis(): Promise<void> {
-    // Your code goes here
-}
+import redis from 'redis';
 
-module.exports = { manageRedis };
+export async function manageRedis(): Promise<void> {
+  const client = redis.createClient();
+
+  client.on('error', (err: Error) => {
+    console.error('Redis Client Error:', err);
+  });
+
+  try {
+    const key = 'key';
+    const value = 'value';
+
+    await new Promise<void>((resolve, reject) => {
+      client.set(key, value, (err: Error | null) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log(`Saved: ${key} -> ${value}`);
+          resolve();
+        }
+      });
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      client.get(key, (err: Error | null, reply: string) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log(`Value for ${key}: ${reply}`);
+          resolve();
+        }
+      });
+    });
+  } catch (error) {
+    console.error('Error in manageRedis:', error);
+  } finally {
+    client.quit();
+  }
+}

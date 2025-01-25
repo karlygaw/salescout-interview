@@ -1,21 +1,22 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "ESNext",
+        "module": "CommonJS",
         "allowJs": true,
         "sourceMap": true,
         "outDir": "build/src",
         "strict": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictNullChecks": true,
         "strictFunctionTypes": true,
         "alwaysStrict": true,
         "resolveJsonModule": true,
-        "skipLibCheck": false,
-        "jsx": "react",
+        "skipLibCheck": true,
+        "jsx": "react"
     },
-    "include": ["src/**/*", "__tests__/**/*"]
+    "include": ["src/**/*","src/types/**/*", "__tests__/**/*"]
 }

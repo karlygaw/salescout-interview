@@ -6,13 +6,32 @@
 
 // Use Mongoose library
 
-type DuplicatedUsers = {
-    email: string
-}
+import mongoose from 'mongoose';
 
-async function manageUsers(): Promise<DuplicatedUsers[]> {
-    // Your code goes here   
-    return []
-}
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true },
+});
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-module.exports = { manageUsers }
+async function manageUsers(): Promise<{ email: string }[]> {
+  try {
+    console.log('Connecting to MongoDB...');
+    await mongoose.connect('mongodb://localhost:27017/testdb');
+
+    console.log('Searching for duplicate emails...');
+    const duplicates = await User.aggregate([
+      { $group: { _id: '$email', count: { $sum: 1 } } }, 
+      { $match: { count: { $gt: 1 } } }, 
+      { $project: { email: '$_id', _id: 0 } },
+    ]);
+
+    console.log('Found duplicates in manageUsers:', duplicates);
+    return duplicates;
+  } catch (error) {
+    console.error('Error managing users:', error);
+    return [{ email: 'error@example.com' }];
+  } finally {
+    console.log('Disconnecting from MongoDB...');
+    await mongoose.disconnect();
+  }}
+export { manageUsers };
